@@ -1,20 +1,25 @@
 FROM omero-base
 
-MAINTAINER hadrien.mary@gmail.com
-
 ENV OMERO_WEB_CERTS_DIR /data/web_certs
 ENV OMERO_WEB_USE_SSL yes
 ENV OMERO_WEB_DEVELOPMENT no
 ENV OMERO_WEB_DEVELOPMENT_APPS /data/omero_web_apps
 
-RUN apt-get install -y nginx-full supervisor python-pip openssl
+RUN add-apt-repository -y ppa:nginx/stable && \
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+    nginx \
+    openssl \
+    supervisor && \
+  pip install \
+    'django==1.8.16' \
+    'django-debug-toolbar==1.6' \
+    'gunicorn==19.6.0' && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/root/.cache/*
 
-RUN pip install -r $OMERO_HOME/share/web/requirements-py27-nginx.txt
-RUN pip install django-debug-toolbar
 COPY nginx_omero.conf $OMERO_HOME/nginx_omero.conf
 COPY nginx_omero_ssl.conf $OMERO_HOME/nginx_omero_ssl.conf
 
-USER root
 RUN rm /etc/nginx/sites-enabled/default
 RUN mv $OMERO_HOME/nginx_omero.conf /etc/nginx/sites-available/nginx_omero.conf
 RUN mv $OMERO_HOME/nginx_omero_ssl.conf /etc/nginx/sites-available/nginx_omero_ssl.conf

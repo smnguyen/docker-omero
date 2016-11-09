@@ -1,3 +1,5 @@
+export OMERO=$OMERO_HOME/bin/omero
+
 # Wait for data directory to be up
 while [ ! -d $(dirname $OMERO_DATA_DIR) ]
 do
@@ -22,16 +24,25 @@ fi
 cd $OMERO_HOME/
 
 if [ -f "/data/config.sh" ]; then
-    bash /data/config.sh || (echo "Something failed during the config.sh"; exit 1);
+    bash /data/config.sh || (echo "Something failed while running config.sh"; exit 1);
 fi
 
 mkdir -p $OMERO_SCRIPTS_DIR/
-ln -s $OMERO_SCRIPTS_DIR/ lib/scripts/custom_scripts
+chown omero $OMERO_SCRIPTS_DIR
+ln -s $OMERO_SCRIPTS_DIR/ $OMERO_HOME/lib/scripts/custom_scripts
 
-rm -fr var/
-ln -s $OMERO_VAR_DIR var
+mkdir -p $OMERO_VAR_DIR/
+chown omero $OMERO_VAR_DIR/
+rm -rf $OMERO_HOME/var/  # TODO Will this remove existing logs after the first launch?
+ln -s $OMERO_VAR_DIR $OMERO_HOME/var
 
-./bin/omero config set omero.db.host $HOST
-./bin/omero config set omero.db.port $PORT
-./bin/omero config set omero.data.dir $OMERO_DATA_DIR
-./bin/omero admin start --foreground
+mkdir -p $OMERO_DATA_DIR/
+chown omero $OMERO_DATA_DIR
+
+echo "Setting configuration settings"
+gosu omero $OMERO config set omero.db.host $HOST
+gosu omero $OMERO config set omero.db.port $PORT
+gosu omero $OMERO config set omero.data.dir $OMERO_DATA_DIR
+
+echo "Starting OMERO"
+exec gosu omero $OMERO admin start --foreground
