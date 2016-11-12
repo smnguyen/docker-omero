@@ -23,5 +23,5 @@ else
     gosu omero $OMERO config set omero.web.application_server.port 4080
 fi
 
-gosu omero $OMERO config set omero.web.server_list "[[\"omero_server\", 4064, \"omero\"]]"
+gosu omero $OMERO config set omero.web.server_list "[[\"omero-server\", 4064, \"omero\"]]"
 exec gosu omero $OMERO web start --foreground

@@ -17,18 +17,13 @@ RUN add-apt-repository -y ppa:nginx/stable && \
     'gunicorn==19.6.0' && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/root/.cache/*
 
-COPY nginx_omero.conf $OMERO_HOME/nginx_omero.conf
-COPY nginx_omero_ssl.conf $OMERO_HOME/nginx_omero_ssl.conf
-
-RUN rm /etc/nginx/sites-enabled/default
-RUN mv $OMERO_HOME/nginx_omero.conf /etc/nginx/sites-available/nginx_omero.conf
-RUN mv $OMERO_HOME/nginx_omero_ssl.conf /etc/nginx/sites-available/nginx_omero_ssl.conf
-
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-
-COPY supervisor.conf /supervisor.conf
+COPY nginx_omero.conf /etc/nginx/sites-available/nginx_omero.conf
+COPY nginx_omero_ssl.conf /etc/nginx/sites-available/nginx_omero_ssl.conf
 COPY start_nginx.sh /start_nginx.sh
 COPY start_omero_web.sh /start_omero_web.sh
-RUN chown omero /start_omero_web.sh
+COPY supervisor.conf /supervisor.conf
 
-CMD ["/usr/bin/supervisord", "-c", "/supervisor.conf", "-e", "info"]
+RUN rm /etc/nginx/sites-enabled/default && \
+  echo "daemon off;" >> /etc/nginx/nginx.conf
+
+CMD ["supervisord", "-c", "/supervisor.conf", "-e", "info"]
