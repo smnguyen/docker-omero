@@ -3,7 +3,6 @@ services:
   omero-data:
     container_name: omero-data
     image: omero-base
-    privileged: true
     volumes:
       - ${OMERO_DATA_DIR-~/data_omero}:/data:Z
     command: "true"

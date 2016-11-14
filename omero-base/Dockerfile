@@ -75,3 +75,5 @@ RUN omego download --branch=$BRANCH --ice $ICE --unzipdir . -v server && \
   rm OMERO.server*zip && \
   ln -s OMERO.server-* $OMERO_HOME
 USER root
+
+ENV PATH $OMERO_HOME/bin:$PATH

@@ -1,7 +1,5 @@
-if [ $OMERO_WEB_DEVELOPMENT == "no" ]
-then
-    if [ $OMERO_WEB_USE_SSL == "yes" ]
-    then
+if [ $OMERO_WEB_DEVELOPMENT == "no" ]; then
+    if [ $OMERO_WEB_USE_SSL == "yes" ]; then
         # Setup nginx for ssl
         echo "Enable https for OMERO.web"
         ln -s /etc/nginx/sites-available/nginx_omero_ssl.conf /etc/nginx/sites-enabled/
