@@ -10,7 +10,7 @@ if [ $OMERO_WEB_DEVELOPMENT == "no" ]; then
     fi
 
     # Load applications from /data/omero_web_apps/deploy.sh
-    bash $OMERO_WEB_DEVELOPMENT_APPS/deploy.sh
+    gosu omero bash $OMERO_WEB_DEVELOPMENT_APPS/deploy.sh
 else
     mkdir -p $OMERO_WEB_DEVELOPMENT_APPS
 

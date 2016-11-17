@@ -31,6 +31,8 @@ ln -s $OMERO_VAR_DIR $OMERO_HOME/var
 mkdir -p $OMERO_DATA_DIR
 chown omero $OMERO_DATA_DIR
 
+# Remove lock files from previously running OMERO server instances.
+find $OMERO_DATA_DIR -name "*.lock" | xargs -I % rm %
 
 echo "Setting configuration settings"
 gosu omero omero config set omero.db.host $HOST
